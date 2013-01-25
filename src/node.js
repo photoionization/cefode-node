@@ -64,26 +64,6 @@
 
     var Module = NativeModule.require('module');
 
-    // Execute the main script
-    if (process.argv[1]) {
-      // make process.argv[1] into a full path
-      var path = NativeModule.require('path');
-      process.argv[1] = path.resolve(process.argv[1]);
-
-      // If this is a worker in cluster mode, start up the communiction
-      // channel.
-      if (process.env.NODE_UNIQUE_ID) {
-        var cluster = NativeModule.require('cluster');
-        cluster._setupWorker();
-
-        // Make sure it's not accidentally inherited by child processes.
-        delete process.env.NODE_UNIQUE_ID;
-      }
-
-      // Main entry point into most programs:
-      process.nextTick(Module.runMain);
-    }
-
     // Emulate node.js script's execution everionment
     var module = new Module('.', null);
     global.process.mainModule = module;
