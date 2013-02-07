@@ -370,6 +370,8 @@ Handle<Value> WrappedScript::EvalMachine(const Arguments& args) {
     // Use the passed in context
     WrappedContext *nContext = ObjectWrap::Unwrap<WrappedContext>(sandbox);
     context = nContext->GetV8Context();
+  } else {
+    context = args.This()->CreationContext();
   }
 
   Context::Scope context_scope(context);
