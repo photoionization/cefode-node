@@ -1,5 +1,6 @@
 (function(process) {
   if (this.WebInspector) return;
+  if (window && window.location == 'about:blank') return;
 
   this.global = this;
 
@@ -85,7 +86,16 @@
   // Emulate node.js script's execution everionment
   var Module = NativeModule.require('module');
   var module = new Module('.', null);
-  global.process.mainModule = module;
+
+  var filename = decodeURIComponent(window.location.pathname);
+  if (process.platform == 'win32') filename = filename.substr(1);
+  var dirname = NativeModule.require('path').dirname(filename);
+
+  module.filename = filename;
+  module.paths = NativeModule.require('module')._nodeModulePaths(dirname);
+  module.loaded = true;
   module._compile('global.module = module;\n' +
                   'global.require = require;\n', 'nw-emulate-node');
+
+  global.process.mainModule = module;
 });
