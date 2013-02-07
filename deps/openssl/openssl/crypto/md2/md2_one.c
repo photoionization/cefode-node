@@ -72,7 +72,7 @@ unsigned char *MD2(const unsigned char *d, size_t n, unsigned char *md)
 	if (!MD2_Init(&c))
 		return NULL;
 #ifndef CHARSET_EBCDIC
-	MD2_Update(&c,d,n);
+	OpensslMD2_Update(&c,d,n);
 #else
 	{
 		char temp[1024];
@@ -82,7 +82,7 @@ unsigned char *MD2(const unsigned char *d, size_t n, unsigned char *md)
 		{
 			chunk = (n > sizeof(temp)) ? sizeof(temp) : n;
 			ebcdic2ascii(temp, d, chunk);
-			MD2_Update(&c,temp,chunk);
+			OpensslMD2_Update(&c,temp,chunk);
 			n -= chunk;
 			d += chunk;
 		}

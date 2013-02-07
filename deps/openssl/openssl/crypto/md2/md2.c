@@ -108,7 +108,7 @@ void do_fp(FILE *f)
 		{
 		i=read(fd,buf,BUFSIZE);
 		if (i <= 0) break;
-		MD2_Update(&c,buf,(unsigned long)i);
+		OpensslMD2_Update(&c,buf,(unsigned long)i);
 		}
 	MD2_Final(&(md[0]),&c);
 	pt(md);
