@@ -49,6 +49,7 @@
       'lib/util.js',
       'lib/vm.js',
       'lib/zlib.js',
+      'lib/sqlite3.js',
     ],
   },
 
@@ -59,6 +60,7 @@
       'toolsets': ['host', 'target'],
 
       'dependencies': [
+        '../sqlite/sqlite.gyp:sqlite',
         'deps/http_parser/http_parser.gyp:http_parser',
         'deps/uv/uv.gyp:uv',
         'node_js2c#host',
@@ -97,6 +99,9 @@
         'src/nw/node_id_weak_map.cc',
         'src/nw/node_v8_util.cc',
         'src/nw/object_life_monitor.cc',
+        'src/nw/sqlite3/database.cc',
+        'src/nw/sqlite3/node_sqlite3.cc',
+        'src/nw/sqlite3/statement.cc',
         'src/pipe_wrap.cc',
         'src/stream_wrap.cc',
         'src/slab_allocator.cc',
@@ -122,6 +127,11 @@
         'src/node_string.h',
         'src/node_version.h',
         'src/nw/object_life_monitor.h',
+        'src/nw/sqlite3/async.h',
+        'src/nw/sqlite3/database.h',
+        'src/nw/sqlite3/macros.h',
+        'src/nw/sqlite3/statement.h',
+        'src/nw/sqlite3/threading.h',
         'src/ngx-queue.h',
         'src/pipe_wrap.h',
         'src/tty_wrap.h',
