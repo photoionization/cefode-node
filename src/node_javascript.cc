@@ -36,6 +36,10 @@ Handle<String> MainSource() {
   return BUILTIN_ASCII_ARRAY(node_native, sizeof(node_native)-1);
 }
 
+Handle<String> CefodeMainSource() {
+  return BUILTIN_ASCII_ARRAY(cefode_native, sizeof(cefode_native)-1);
+}
+
 void DefineJavaScript(v8::Handle<v8::Object> target) {
   HandleScope scope;
 

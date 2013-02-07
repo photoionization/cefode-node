@@ -13,6 +13,7 @@
     'node_tag%': '',
     'library_files': [
       'src/node.js',
+      'src/cefode.js',
       'lib/_debugger.js',
       'lib/_linklist.js',
       'lib/assert.js',

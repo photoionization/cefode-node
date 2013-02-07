@@ -25,5 +25,6 @@ namespace node {
 
 void DefineJavaScript(v8::Handle<v8::Object> target);
 v8::Handle<v8::String> MainSource();
+v8::Handle<v8::String> CefodeMainSource();
 
 }  // namespace node
