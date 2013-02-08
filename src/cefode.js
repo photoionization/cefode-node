@@ -93,12 +93,12 @@
   var Module = NativeModule.require('module');
   var module = new Module('.', null);
 
-  var filename = decodeURIComponent(window.location.pathname);
-  if (process.platform == 'win32') filename = filename.substr(1);
-  var dirname = NativeModule.require('path').dirname(filename);
+  global.__filename = decodeURIComponent(window.location.pathname);
+  if (process.platform == 'win32') global.__filename = filename.substr(1);
+  global.__dirname = NativeModule.require('path').dirname(global.__filename);
 
-  module.filename = filename;
-  module.paths = NativeModule.require('module')._nodeModulePaths(dirname);
+  module.filename = global.__filename;
+  module.paths = NativeModule.require('module')._nodeModulePaths(global.__dirname);
   module.loaded = true;
   module._compile('global.module = module;\n' +
                   'global.require = require;\n', 'nw-emulate-node');
