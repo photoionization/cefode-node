@@ -49,7 +49,7 @@ class NODE_EXTERN ObjectWrap {
       v8::HandleScope scope;
       assert(handle_.IsNearDeath());
       handle_.ClearWeak();
-      handle_->SetInternalField(0, v8::Undefined());
+      // handle_->SetInternalField(0, v8::Undefined());
       handle_.Dispose();
       handle_.Clear();
     }
