@@ -1899,8 +1899,10 @@ void FatalException(TryCatch &try_catch) {
 }
 
 
+#if 0
 Persistent<Object> binding_cache;
 Persistent<Array> module_load_list;
+#endif
 
 static Handle<Value> Binding(const Arguments& args) {
   HandleScope scope;
@@ -1909,9 +1911,11 @@ static Handle<Value> Binding(const Arguments& args) {
   String::Utf8Value module_v(module);
   node_module_struct* modp;
 
+#if 0
   if (binding_cache.IsEmpty()) {
     binding_cache = Persistent<Object>::New(Object::New());
   }
+#endif
 
   Local<Object> exports;
 
@@ -1922,33 +1926,43 @@ static Handle<Value> Binding(const Arguments& args) {
   }
 #endif
 
+#if 0
   // Append a string to process.moduleLoadList
   char buf[1024];
   snprintf(buf, 1024, "Binding %s", *module_v);
   uint32_t l = module_load_list->Length();
   module_load_list->Set(l, String::New(buf));
+#endif
 
   if ((modp = get_builtin_module(*module_v)) != NULL) {
     exports = Object::New();
     modp->register_func(exports);
+#if 0
     binding_cache->Set(module, exports);
+#endif
 
   } else if (!strcmp(*module_v, "constants")) {
     exports = Object::New();
     DefineConstants(exports);
+#if 0
     binding_cache->Set(module, exports);
+#endif
 
 #ifdef __POSIX__
   } else if (!strcmp(*module_v, "io_watcher")) {
     exports = Object::New();
     IOWatcher::Initialize(exports);
+#if 0
     binding_cache->Set(module, exports);
+#endif
 #endif
 
   } else if (!strcmp(*module_v, "natives")) {
     exports = Object::New();
     DefineJavaScript(exports);
+#if 0
     binding_cache->Set(module, exports);
+#endif
 
   } else {
 
@@ -2183,9 +2197,11 @@ Handle<Object> SetupProcessObject(int argc, char *argv[]) {
   // process.version
   process->Set(String::NewSymbol("version"), String::New(NODE_VERSION));
 
+#if 0
   // process.moduleLoadList
   module_load_list = Persistent<Array>::New(Array::New());
   process->Set(String::NewSymbol("moduleLoadList"), module_load_list);
+#endif
 
   // process.versions
   Local<Object> versions = Object::New();

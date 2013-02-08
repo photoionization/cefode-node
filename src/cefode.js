@@ -31,8 +31,6 @@
       throw new Error('No such native module ' + id);
     }
 
-    process.moduleLoadList.push('NativeModule ' + id);
-
     var nativeModule = new NativeModule(id);
 
     nativeModule.compile();
