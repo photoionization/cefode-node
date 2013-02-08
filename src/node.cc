@@ -1915,10 +1915,12 @@ static Handle<Value> Binding(const Arguments& args) {
 
   Local<Object> exports;
 
+#if 0
   if (binding_cache->Has(module)) {
     exports = binding_cache->Get(module)->ToObject();
     return scope.Close(exports);
   }
+#endif
 
   // Append a string to process.moduleLoadList
   char buf[1024];
