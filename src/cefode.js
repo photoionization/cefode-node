@@ -88,6 +88,7 @@
   global.GLOBAL = global;
   global.root = global;
   global.Buffer = NativeModule.require('buffer').Buffer;
+  global.errno = null;
 
   // Emulate node.js script's execution everionment
   var Module = NativeModule.require('module');
