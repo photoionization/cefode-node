@@ -74,13 +74,18 @@
     NativeModule._cache[this.id] = this;
   };
 
-  // Every window should has its own process object, so no code in WebKit will
-  // be ran by libuv, which is wrapped by the node context.
-  // TODO process.on may still run code under wrap of node context
+  // Every window should has its own process object.
   var processProxy = {};
+  var bindingCache = {};
   processProxy.__proto__ = Object.create(process);
   processProxy.parent = process;
   processProxy.nextTick = function(callback) { setTimeout(callback, 0); };
+  processProxy.binding = function(id) {
+    var cached = bindingCache[id];
+    if (cached) return cached;
+
+    return bindingCache[id] = process.binding(id);
+  }
 
   // Inject globals.
   global.process = processProxy;
