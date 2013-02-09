@@ -412,10 +412,10 @@ Handle<Value> Buffer::Copy(const Arguments &args) {
   Local<Object> target = args[0]->ToObject();
   char* target_data = Buffer::Data(target);
   size_t target_length = Buffer::Length(target);
-  size_t target_start = args[1]->Uint32Value();
-  size_t source_start = args[2]->Uint32Value();
-  size_t source_end = args[3]->IsUint32() ? args[3]->Uint32Value()
-                                          : source->length_;
+  size_t target_start = args[1]->IsUndefined() ? 0 : args[1]->Uint32Value();
+  size_t source_start = args[2]->IsUndefined() ? 0 : args[2]->Uint32Value();
+  size_t source_end = args[3]->IsUndefined() ? source->length_
+                                              : args[3]->Uint32Value();
 
   if (source_end < source_start) {
     return ThrowException(Exception::Error(String::New(
@@ -707,6 +707,19 @@ Handle<Value> Buffer::MakeFastBuffer(const Arguments &args) {
   Local<Object> fast_buffer = args[1]->ToObject();;
   uint32_t offset = args[2]->Uint32Value();
   uint32_t length = args[3]->Uint32Value();
+
+  if (offset > buffer->length_) {
+    return ThrowRangeError("offset out of range");
+  }
+
+  if (offset + length > buffer->length_) {
+    return ThrowRangeError("length out of range");
+  }
+
+  // Check for wraparound. Safe because offset and length are unsigned.
+  if (offset + length < offset) {
+    return ThrowRangeError("offset or length out of range");
+  }
 
   fast_buffer->SetIndexedPropertiesToExternalArrayData(buffer->data_ + offset,
                                                        kExternalUnsignedByteArray,

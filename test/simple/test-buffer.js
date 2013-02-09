@@ -22,6 +22,7 @@
 var common = require('../common');
 var assert = require('assert');
 
+var SlowBuffer = require('buffer').SlowBuffer;
 var Buffer = require('buffer').Buffer;
 
 var b = Buffer(1024); // safe constructor
@@ -76,6 +77,14 @@ console.log('copied ' + copied + ' bytes from b into c');
 assert.strictEqual(768, copied);
 for (var i = 0; i < c.length; i++) {
   assert.equal(i % 256, c[i]);
+}
+
+// copy from fast to slow buffer
+var sb = new SlowBuffer(b.length);
+var copied = b.copy(sb);
+console.log('copied %d bytes from b into sb');
+for (var i = 0; i < sb.length; i++) {
+  assert.strictEqual(sb[i], b[i]);
 }
 
 var caught_error = null;
@@ -745,3 +754,47 @@ assert.throws(function() {
 assert.throws(function() {
   new Buffer(0xFFFFFFFFF);
 }, TypeError);
+
+// SlowBuffer sanity checks.
+assert.throws(function() {
+  var len = 0xfffff;
+  var sbuf = new SlowBuffer(len);
+  var buf = new Buffer(sbuf, len, 0);
+  SlowBuffer.makeFastBuffer(sbuf, buf, -len, len);  // Should throw.
+  for (var i = 0; i < len; ++i) buf[i] = 0x42;      // Try to force segfault.
+}, RangeError);
+
+assert.throws(function() {
+  var len = 0xfffff;
+  var sbuf = new SlowBuffer(len);
+  var buf = new Buffer(sbuf, len, -len);           // Should throw.
+  for (var i = 0; i < len; ++i) buf[i] = 0x42;     // Try to force segfault.
+}, RangeError);
+
+assert.throws(function() {
+  var len = 0xfffff;
+  var sbuf = new SlowBuffer(len);
+  sbuf = sbuf.slice(-len);                          // Should throw.
+  for (var i = 0; i < len; ++i) sbuf[i] = 0x42;     // Try to force segfault.
+}, RangeError);
+
+assert.throws(function() {
+  var sbuf = new SlowBuffer(1);
+  var buf = new Buffer(sbuf, 1, 0);
+  buf.length = 0xffffffff;
+  buf.slice(0xffffff0, 0xffffffe);                  // Should throw.
+}, Error);
+
+assert.throws(function() {
+  var sbuf = new SlowBuffer(8);
+  var buf = new Buffer(sbuf, 8, 0);
+  buf.slice(-8);  // Should throw. Throws Error instead of RangeError
+                  // for the sake of v0.8 compatibility.
+}, Error);
+
+assert.throws(function() {
+  var sbuf = new SlowBuffer(16);
+  var buf = new Buffer(sbuf, 8, 8);
+  buf.slice(-8);  // Should throw. Throws Error instead of RangeError
+                  // for the sake of v0.8 compatibility.
+}, Error);
