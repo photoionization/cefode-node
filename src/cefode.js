@@ -93,7 +93,14 @@
   global.GLOBAL = global;
   global.root = global;
   global.Buffer = NativeModule.require('buffer').Buffer;
-  global.errno = null;
+
+  // Map global.errno to the one in node context.
+  global.__defineGetter__('errno', function() {
+    return process.global.errno;
+  });
+  global.__defineSetter__('errno', function(errno) {
+    process.global.errno = errno;
+  });
 
   // Emulate node.js script's execution everionment
   var Module = NativeModule.require('module');
