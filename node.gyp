@@ -58,7 +58,6 @@
     {
       'target_name': 'node',
       'type': 'static_library',
-      'toolsets': ['host', 'target'],
 
       'dependencies': [
         '../sqlite/sqlite.gyp:sqlite',
