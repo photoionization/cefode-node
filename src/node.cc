@@ -3039,3 +3039,23 @@ int Start(int argc, char *argv[]) {
 }
 
 }  // namespace node
+
+// Delegate uv_default_loop to return different loop on different thread.
+extern "C" uv_loop_t* uv_default_loop_real(void);
+
+extern "C" uv_loop_t* uv_default_loop(void) {
+  if (node::node_isolate == NULL)
+    return uv_default_loop_real();
+
+  Isolate* isolate = Isolate::GetCurrent();
+  if (isolate == NULL || isolate == node::node_isolate)
+    return uv_default_loop_real();
+
+  void* data = isolate->GetData();
+  if (data == NULL) {
+    data = uv_loop_new();
+    isolate->SetData(data);
+  }
+
+  return static_cast<uv_loop_t*>(data);
+}

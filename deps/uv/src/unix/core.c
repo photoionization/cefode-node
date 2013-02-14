@@ -189,7 +189,7 @@ int uv_is_closing(const uv_handle_t* handle) {
 }
 
 
-uv_loop_t* uv_default_loop(void) {
+uv_loop_t* uv_default_loop_real(void) {
   if (default_loop_ptr)
     return default_loop_ptr;
 

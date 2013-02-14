@@ -135,7 +135,7 @@ void uv__once_init(void) {
 }
 
 
-uv_loop_t* uv_default_loop(void) {
+uv_loop_t* uv_default_loop_real(void) {
   uv_once(&uv_default_loop_init_guard_, uv_default_loop_init);
   return &uv_default_loop_;
 }
