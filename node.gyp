@@ -75,6 +75,7 @@
 
       'direct_dependent_settings': {
         'include_dirs': [
+          'src',
           'deps/uv/include',
         ],
       },
