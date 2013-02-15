@@ -26,12 +26,18 @@
 
 #include <assert.h>
 
+#include "node_vars.h"
+#define constructor_template NODE_VAR(io_watcher_constructor_template)
+#define callback_symbol NODE_VAR(callback_symbol)
+
 namespace node {
 
 using namespace v8;
 
+#if 0
 Persistent<FunctionTemplate> IOWatcher::constructor_template;
 Persistent<String> callback_symbol;
+#endif
 
 
 void IOWatcher::Initialize(Handle<Object> target) {

@@ -24,11 +24,16 @@
 
 #include <stdlib.h>
 
+#include "node_vars.h"
+#define onchange_sym NODE_VAR(onchange_sym)
+
 using namespace v8;
 
 namespace node {
 
+#if 0
 static Persistent<String> onchange_sym;
+#endif
 
 class FSEventWrap: public HandleWrap {
 public:

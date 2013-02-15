@@ -37,6 +37,25 @@
 # include <io.h>
 #endif
 
+#include "node_vars.h"
+#define encoding_symbol NODE_VAR(encoding_symbol)
+#define buf_symbol NODE_VAR(buf_symbol)
+#define stats_constructor_template NODE_VAR(stats_constructor_template)
+#define dev_symbol NODE_VAR(dev_symbol)
+#define ino_symbol NODE_VAR(ino_symbol)
+#define mode_symbol NODE_VAR(mode_symbol)
+#define nlink_symbol NODE_VAR(nlink_symbol)
+#define uid_symbol NODE_VAR(uid_symbol)
+#define gid_symbol NODE_VAR(gid_symbol)
+#define rdev_symbol NODE_VAR(rdev_symbol)
+#define size_symbol NODE_VAR(size_symbol)
+#define blksize_symbol NODE_VAR(blksize_symbol)
+#define blocks_symbol NODE_VAR(blocks_symbol)
+#define atime_symbol NODE_VAR(atime_symbol)
+#define mtime_symbol NODE_VAR(mtime_symbol)
+#define ctime_symbol NODE_VAR(ctime_symbol)
+
+
 namespace node {
 
 using namespace v8;
@@ -61,10 +80,12 @@ class FSReqWrap: public ReqWrap<uv_fs_t> {
 };
 
 
+#if 0
 static Persistent<String> encoding_symbol;
 static Persistent<String> errno_symbol;
 static Persistent<String> buf_symbol;
 static Persistent<String> oncomplete_sym;
+#endif
 
 
 #define ASSERT_OFFSET(a) \
@@ -263,6 +284,7 @@ static Handle<Value> Close(const Arguments& args) {
 }
 
 
+#if 0
 static Persistent<FunctionTemplate> stats_constructor_template;
 
 static Persistent<String> dev_symbol;
@@ -278,6 +300,7 @@ static Persistent<String> blocks_symbol;
 static Persistent<String> atime_symbol;
 static Persistent<String> mtime_symbol;
 static Persistent<String> ctime_symbol;
+#endif
 
 Local<Object> BuildStatsObject(const uv_statbuf_t* s) {
   HandleScope scope;

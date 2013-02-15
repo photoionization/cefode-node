@@ -68,7 +68,9 @@ class NODE_EXTERN Buffer: public ObjectWrap {
   // mirrors deps/v8/src/objects.h
   static const unsigned int kMaxLength = 0x3fffffff;
 
+#if 0
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
+#endif
 
   static bool HasInstance(v8::Handle<v8::Value> val);
 
