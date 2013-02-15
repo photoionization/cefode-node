@@ -39,7 +39,9 @@
 
 #include "node_vars.h"
 #define encoding_symbol NODE_VAR(encoding_symbol)
+#define errno_symbol NODE_VAR(errno_symbol)
 #define buf_symbol NODE_VAR(buf_symbol)
+#define oncomplete_sym NODE_VAR(oncomplete_sym)
 #define stats_constructor_template NODE_VAR(stats_constructor_template)
 #define dev_symbol NODE_VAR(dev_symbol)
 #define ino_symbol NODE_VAR(ino_symbol)
