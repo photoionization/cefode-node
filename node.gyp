@@ -77,6 +77,7 @@
         'include_dirs': [
           'src',
           'deps/uv/include',
+          'deps/http_parser',
         ],
       },
 

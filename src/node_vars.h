@@ -126,6 +126,7 @@ struct globals {
   v8::Persistent<v8::String> onstop_sym;
 
   // node_zlib.cc
+  v8::Persistent<v8::String> callback_sym;
   v8::Persistent<v8::String> onerror_sym;
 
   // pipe_wrap.cc
