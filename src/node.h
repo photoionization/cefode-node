@@ -95,7 +95,10 @@ NODE_EXTERN void Shutdown();
 NODE_EXTERN int Start(int argc, char *argv[]);
 
 char** Init(int argc, char *argv[]);
-v8::Handle<v8::Object> SetupProcessObject(v8::Handle<v8::Object> process, int argc, char *argv[]);
+v8::Handle<v8::Object> SetupProcessObject(
+    v8::Handle<v8::Object> process,
+    int argc, char *argv[],
+    bool is_worker = false);
 void Load(v8::Handle<v8::Object> process);
 NODE_EXTERN void EmitExit(v8::Handle<v8::Object> process);
 NODE_EXTERN void RunAtExit();

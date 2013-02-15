@@ -28,8 +28,10 @@ namespace node {
 
 // defined in node.cc
 extern v8::Persistent<v8::Context> g_context;
+#if 0
 extern v8::Persistent<v8::String> process_symbol;
 extern v8::Persistent<v8::String> domain_symbol;
+#endif
 extern v8::Persistent<v8::Object> process;
 extern ngx_queue_t req_wrap_queue;
 
@@ -39,6 +41,8 @@ class ReqWrap {
   ReqWrap() {
     v8::HandleScope scope;
     object_ = v8::Persistent<v8::Object>::New(v8::Object::New());
+    v8::Handle<v8::String> process_symbol = v8::String::NewSymbol("process");
+    v8::Handle<v8::String> domain_symbol = v8::String::NewSymbol("domain");
 
     v8::Local<v8::Value> domain = v8::Context::GetCurrent()
                                   ->Global()

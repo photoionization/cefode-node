@@ -85,6 +85,7 @@ typedef int mode_t;
 #else
 #include <pthread.h>
 #endif
+#include "node_vars.h"
 
 using namespace v8;
 
@@ -102,8 +103,10 @@ ngx_queue_t req_wrap_queue = { &req_wrap_queue, &req_wrap_queue };
 
 // declared in req_wrap.h
 Persistent<Context> g_context;
+#if 0
 Persistent<String> process_symbol;
 Persistent<String> domain_symbol;
+#endif
 Persistent<Object> process;
 
 static Persistent<String> errno_symbol;
@@ -1022,7 +1025,7 @@ MakeCallback(const Handle<Object> object,
     disposed_symbol = NODE_PSYMBOL("_disposed");
   }
 
-  Local<Value> domain_v = object->Get(domain_symbol);
+  Local<Value> domain_v = object->Get(String::NewSymbol("domain"));
   Local<Object> domain;
   Local<Function> enter;
   Local<Function> exit;
@@ -2186,7 +2189,9 @@ static Handle<Value> DebugProcess(const Arguments& args);
 static Handle<Value> DebugPause(const Arguments& args);
 static Handle<Value> DebugEnd(const Arguments& args);
 
-Handle<Object> SetupProcessObject(Handle<Object> process, int argc, char *argv[]) {
+Handle<Object> SetupProcessObject(Handle<Object> process,
+                                  int argc, char *argv[],
+                                  bool is_worker) {
   HandleScope scope;
 
   int i, j;
@@ -2317,9 +2322,11 @@ Handle<Object> SetupProcessObject(Handle<Object> process, int argc, char *argv[]
 
 
   // define various internal methods
+  if (!is_worker) {
   NODE_SET_METHOD(process, "_getActiveRequests", GetActiveRequests);
   NODE_SET_METHOD(process, "_getActiveHandles", GetActiveHandles);
   NODE_SET_METHOD(process, "_needTickCallback", NeedTickCallback);
+  }
   NODE_SET_METHOD(process, "reallyExit", Exit);
   NODE_SET_METHOD(process, "abort", Abort);
   NODE_SET_METHOD(process, "chdir", Chdir);
@@ -2976,9 +2983,6 @@ void SetupUv(int argc, char *argv[]) {
 void SetupContext(int argc, char *argv[], v8::Handle<v8::Object> global) {
   HandleScope scope;
 
-  process_symbol = NODE_PSYMBOL("process");
-  domain_symbol = NODE_PSYMBOL("domain");
-
   Local<FunctionTemplate> process_template = FunctionTemplate::New();
 
   process_template->SetClassName(String::NewSymbol("process"));
@@ -3009,9 +3013,6 @@ int Start(int argc, char *argv[]) {
 
     Persistent<Context> context = Context::New();
     Context::Scope context_scope(context);
-
-    process_symbol = NODE_PSYMBOL("process");
-    domain_symbol = NODE_PSYMBOL("domain");
 
     Local<FunctionTemplate> process_template = FunctionTemplate::New();
 
