@@ -2186,16 +2186,10 @@ static Handle<Value> DebugProcess(const Arguments& args);
 static Handle<Value> DebugPause(const Arguments& args);
 static Handle<Value> DebugEnd(const Arguments& args);
 
-Handle<Object> SetupProcessObject(int argc, char *argv[]) {
+Handle<Object> SetupProcessObject(Handle<Object> process, int argc, char *argv[]) {
   HandleScope scope;
 
   int i, j;
-
-  Local<FunctionTemplate> process_template = FunctionTemplate::New();
-
-  process_template->SetClassName(String::NewSymbol("process"));
-
-  process = Persistent<Object>::New(process_template->GetFunction()->NewInstance());
 
   process->SetAccessor(String::New("title"),
                        ProcessTitleGetter,
@@ -2985,8 +2979,14 @@ void SetupContext(int argc, char *argv[], v8::Handle<v8::Object> global) {
   process_symbol = NODE_PSYMBOL("process");
   domain_symbol = NODE_PSYMBOL("domain");
 
-  // Use original argv, as we're just copying values out of it.
-  SetupProcessObject(argc, argv);
+  Local<FunctionTemplate> process_template = FunctionTemplate::New();
+
+  process_template->SetClassName(String::NewSymbol("process"));
+
+  process = Persistent<Object>::New(process_template->GetFunction()->NewInstance());
+
+  SetupProcessObject(process, argc, argv);
+
   v8_typed_array::AttachBindings(global);
 
   // Create all the objects, load modules, do everything.
@@ -3013,8 +3013,14 @@ int Start(int argc, char *argv[]) {
     process_symbol = NODE_PSYMBOL("process");
     domain_symbol = NODE_PSYMBOL("domain");
 
+    Local<FunctionTemplate> process_template = FunctionTemplate::New();
+
+    process_template->SetClassName(String::NewSymbol("process"));
+
+    process = Persistent<Object>::New(process_template->GetFunction()->NewInstance());
+
     // Use original argv, as we're just copying values out of it.
-    Handle<Object> process_l = SetupProcessObject(argc, argv);
+    Handle<Object> process_l = SetupProcessObject(process, argc, argv);
     v8_typed_array::AttachBindings(context->Global());
 
     // Create all the objects, load modules, do everything.

@@ -1,11 +1,13 @@
-(function(process) {
-  if (this.WebInspector) return;
-  if (window && window.location == 'about:blank') return;
+(function(process, isWorker) {
+  if (!isWorker) {
+    if (this.WebInspector) return;
+    if (window && window.location == 'about:blank') return;
+
+    var Script = process.binding('evals').NodeScript;
+    var runInThisContext = Script.runInThisContext;
+  }
 
   this.global = this;
-
-  var Script = process.binding('evals').NodeScript;
-  var runInThisContext = Script.runInThisContext;
 
   function NativeModule(id) {
     this.filename = id + '.js';
@@ -74,47 +76,50 @@
     NativeModule._cache[this.id] = this;
   };
 
-  // Every window should has its own process object.
-  var processProxy = {};
-  var bindingCache = {};
-  processProxy.__proto__ = Object.create(process);
-  processProxy.parent = process;
-  processProxy.nextTick = function(callback) { setTimeout(callback, 0); };
-  processProxy.binding = function(id) {
-    var cached = bindingCache[id];
-    if (cached) return cached;
-
-    return bindingCache[id] = process.binding(id);
-  }
-
   // Inject globals.
-  global.process = processProxy;
   global.global = global;
   global.GLOBAL = global;
   global.root = global;
-  global.Buffer = NativeModule.require('buffer').Buffer;
 
-  // Map global.errno to the one in node context.
-  global.__defineGetter__('errno', function() {
-    return process.global.errno;
-  });
-  global.__defineSetter__('errno', function(errno) {
-    process.global.errno = errno;
-  });
+  if (!isWorker) {
+    // Every window should has its own process object.
+    var processProxy = {};
+    var bindingCache = {};
+    processProxy.__proto__ = Object.create(process);
+    processProxy.parent = process;
+    processProxy.nextTick = function(callback) { setTimeout(callback, 0); };
+    processProxy.binding = function(id) {
+      var cached = bindingCache[id];
+      if (cached) return cached;
 
-  // Emulate node.js script's execution everionment
-  var Module = NativeModule.require('module');
-  var module = new Module('.', null);
+      return bindingCache[id] = process.binding(id);
+    }
 
-  global.__filename = decodeURIComponent(window.location.pathname);
-  if (process.platform == 'win32') global.__filename = filename.substr(1);
-  global.__dirname = NativeModule.require('path').dirname(global.__filename);
+    global.process = processProxy;
+    global.Buffer = NativeModule.require('buffer').Buffer;
 
-  module.filename = global.__filename;
-  module.paths = NativeModule.require('module')._nodeModulePaths(global.__dirname);
-  module.loaded = true;
-  module._compile('global.module = module;\n' +
-                  'global.require = require;\n', 'nw-emulate-node');
+    // Map global.errno to the one in node context.
+    global.__defineGetter__('errno', function() {
+      return process.global.errno;
+    });
+    global.__defineSetter__('errno', function(errno) {
+      process.global.errno = errno;
+    });
 
-  global.process.mainModule = module;
+    // Emulate node.js script's execution everionment
+    var Module = NativeModule.require('module');
+    var module = new Module('.', null);
+
+    global.__filename = decodeURIComponent(window.location.pathname);
+    if (process.platform == 'win32') global.__filename = filename.substr(1);
+    global.__dirname = NativeModule.require('path').dirname(global.__filename);
+
+    module.filename = global.__filename;
+    module.paths = NativeModule.require('module')._nodeModulePaths(global.__dirname);
+    module.loaded = true;
+    module._compile('global.module = module;\n' +
+                    'global.require = require;\n', 'nw-emulate-node');
+
+    global.process.mainModule = module;
+  }
 });
