@@ -15,22 +15,22 @@ namespace node {
 
 struct globals {
   // node.cc
-  Persistent<String> errno_symbol;
-  Persistent<String> syscall_symbol;
-  Persistent<String> errpath_symbol;
-  Persistent<String> code_symbol;
+  v8::Persistent<v8::String> errno_symbol;
+  v8::Persistent<v8::String> syscall_symbol;
+  v8::Persistent<v8::String> errpath_symbol;
+  v8::Persistent<v8::String> code_symbol;
 
-  Persistent<String> rss_symbol;
-  Persistent<String> heap_total_symbol;
-  Persistent<String> heap_used_symbol;
+  v8::Persistent<v8::String> rss_symbol;
+  v8::Persistent<v8::String> heap_total_symbol;
+  v8::Persistent<v8::String> heap_used_symbol;
 
-  Persistent<String> listeners_symbol;
-  Persistent<String> uncaught_exception_symbol;
-  Persistent<String> emit_symbol;
+  v8::Persistent<v8::String> listeners_symbol;
+  v8::Persistent<v8::String> uncaught_exception_symbol;
+  v8::Persistent<v8::String> emit_symbol;
 
-  Persistent<String> enter_symbol;
-  Persistent<String> exit_symbol;
-  Persistent<String> disposed_symbol;
+  v8::Persistent<v8::String> enter_symbol;
+  v8::Persistent<v8::String> exit_symbol;
+  v8::Persistent<v8::String> disposed_symbol;
 
   // stream_wrap.cc
   size_t slab_used;
