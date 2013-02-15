@@ -1,13 +1,13 @@
-(function(process, isWorker) {
+(function(process, scriptPath, isWorker) {
   if (!isWorker) {
     if (this.WebInspector) return;
     if (window && window.location == 'about:blank') return;
-
-    var Script = process.binding('evals').NodeScript;
-    var runInThisContext = Script.runInThisContext;
   }
 
   this.global = this;
+
+  var Script = process.binding('evals').NodeScript;
+  var runInThisContext = Script.runInThisContext;
 
   function NativeModule(id) {
     this.filename = id + '.js';
@@ -108,7 +108,6 @@
     }
 
     global.process = processProxy;
-    global.Buffer = NativeModule.require('buffer').Buffer;
 
     // Map global.errno to the one in node context.
     global.__defineGetter__('errno', function() {
@@ -117,21 +116,23 @@
     global.__defineSetter__('errno', function(errno) {
       process.global.errno = errno;
     });
-
-    // Emulate node.js script's execution everionment
-    var Module = NativeModule.require('module');
-    var module = new Module('.', null);
-
-    global.__filename = decodeURIComponent(window.location.pathname);
-    if (process.platform == 'win32') global.__filename = filename.substr(1);
-    global.__dirname = NativeModule.require('path').dirname(global.__filename);
-
-    module.filename = global.__filename;
-    module.paths = NativeModule.require('module')._nodeModulePaths(global.__dirname);
-    module.loaded = true;
-    module._compile('global.module = module;\n' +
-                    'global.require = require;\n', 'nw-emulate-node');
-
-    global.process.mainModule = module;
   }
+
+  global.Buffer = NativeModule.require('buffer').Buffer;
+
+  // Emulate node.js script's execution everionment
+  var Module = NativeModule.require('module');
+  var module = new Module('.', null);
+
+  global.__filename = scriptPath;
+  if (process.platform == 'win32') global.__filename = filename.substr(1);
+  global.__dirname = NativeModule.require('path').dirname(global.__filename);
+
+  module.filename = global.__filename;
+  module.paths = NativeModule.require('module')._nodeModulePaths(global.__dirname);
+  module.loaded = true;
+  module._compile('global.module = module;\n' +
+                  'global.require = require;\n', 'nw-emulate-node');
+
+  global.process.mainModule = module;
 });
