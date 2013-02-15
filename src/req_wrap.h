@@ -60,7 +60,7 @@ class ReqWrap {
 
 
   ~ReqWrap() {
-    ngx_queue_remove(&req_wrap_queue_);
+    // ngx_queue_remove(&req_wrap_queue_);
     // Assert that someone has called Dispatched()
     assert(req_.data == this);
     assert(!object_.IsEmpty());
@@ -74,7 +74,7 @@ class ReqWrap {
   }
 
   v8::Persistent<v8::Object> object_;
-  ngx_queue_t req_wrap_queue_;
+  // ngx_queue_t req_wrap_queue_;
   void* data_;
   T req_; // *must* be last, GetActiveRequests() in node.cc depends on it
 };
