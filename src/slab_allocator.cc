@@ -27,6 +27,9 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include "node_vars.h"
+#define buffer_constructor_template NODE_VAR(buffer_constructor_template)
+
 
 using v8::Handle;
 using v8::HandleScope;
@@ -72,7 +75,7 @@ void SlabAllocator::Initialize() {
 static Local<Object> NewSlab(unsigned int size) {
   HandleScope scope;
   Local<Value> arg = Integer::NewFromUnsigned(ROUND_UP(size, 16));
-  Local<Object> buf = Buffer::constructor_template
+  Local<Object> buf = buffer_constructor_template
                       ->GetFunction()
                       ->NewInstance(1, &arg);
   return scope.Close(buf);
