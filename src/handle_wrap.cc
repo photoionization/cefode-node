@@ -115,7 +115,7 @@ void HandleWrap::SetHandle(uv_handle_t* h) {
 
 HandleWrap::~HandleWrap() {
   assert(object_.IsEmpty());
-  ngx_queue_remove(&handle_wrap_queue_);
+  // ngx_queue_remove(&handle_wrap_queue_);
 }
 
 
