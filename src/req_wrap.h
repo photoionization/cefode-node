@@ -33,7 +33,7 @@ extern v8::Persistent<v8::String> process_symbol;
 extern v8::Persistent<v8::String> domain_symbol;
 #endif
 extern v8::Persistent<v8::Object> process;
-extern ngx_queue_t req_wrap_queue;
+// extern ngx_queue_t req_wrap_queue;
 
 template <typename T>
 class ReqWrap {
@@ -55,7 +55,7 @@ class ReqWrap {
       object_->Set(domain_symbol, domain);
     }
 
-    ngx_queue_insert_tail(&req_wrap_queue, &req_wrap_queue_);
+    // ngx_queue_insert_tail(&req_wrap_queue, &req_wrap_queue_);
   }
 
 

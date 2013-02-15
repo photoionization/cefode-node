@@ -98,8 +98,8 @@ extern char **environ;
 
 namespace node {
 
-ngx_queue_t handle_wrap_queue = { &handle_wrap_queue, &handle_wrap_queue };
-ngx_queue_t req_wrap_queue = { &req_wrap_queue, &req_wrap_queue };
+// ngx_queue_t handle_wrap_queue = { &handle_wrap_queue, &handle_wrap_queue };
+// ngx_queue_t req_wrap_queue = { &req_wrap_queue, &req_wrap_queue };
 
 // declared in req_wrap.h
 Persistent<Context> g_context;
@@ -1365,6 +1365,7 @@ Local<Value> ExecuteString(Handle<String> source, Handle<Value> filename) {
 }
 
 
+#if 0
 static Handle<Value> GetActiveRequests(const Arguments& args) {
   HandleScope scope;
 
@@ -1403,6 +1404,7 @@ Handle<Value> GetActiveHandles(const Arguments& args) {
 
   return scope.Close(ary);
 }
+#endif
 
 
 static Handle<Value> Abort(const Arguments& args) {
@@ -2322,9 +2324,11 @@ Handle<Object> SetupProcessObject(Handle<Object> process,
 
 
   // define various internal methods
-  if (!is_worker) {
+#if 0
   NODE_SET_METHOD(process, "_getActiveRequests", GetActiveRequests);
   NODE_SET_METHOD(process, "_getActiveHandles", GetActiveHandles);
+#endif
+  if (!is_worker) {
   NODE_SET_METHOD(process, "_needTickCallback", NeedTickCallback);
   }
   NODE_SET_METHOD(process, "reallyExit", Exit);
