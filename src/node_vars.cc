@@ -21,13 +21,6 @@ static void init_tls() {
 #else
   pthread_key_create(&loop_key, NULL);
 #endif
-
-  globals* data = new globals();
-#if defined(_WIN32)
-  TlsSetValue(loop_key, data);
-#else
-  pthread_setspecific(loop_key, data);
-#endif
 }
 
 globals* globals_get() {
@@ -38,6 +31,14 @@ globals* globals_get() {
 #else
   void* data = pthread_getspecific(loop_key);
 #endif
+  if (data == NULL) {
+    data = new globals();
+#if defined(_WIN32)
+    TlsSetValue(loop_key, data);
+#else
+    pthread_setspecific(loop_key, data);
+#endif
+  }
 
   return static_cast<globals*>(data);
 }
