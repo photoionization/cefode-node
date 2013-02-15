@@ -81,7 +81,19 @@
   global.GLOBAL = global;
   global.root = global;
 
-  if (!isWorker) {
+  if (isWorker) {
+    global.process = process;
+
+    var binding = process.binding;
+    var bindingCache = {};
+    process.nextTick = function(callback) { setTimeout(callback, 0); };
+    process.binding = function(id) {
+      var cached = bindingCache[id];
+      if (cached) return cached;
+
+      return bindingCache[id] = binding(id);
+    }
+  } else {
     // Every window should has its own process object.
     var processProxy = {};
     var bindingCache = {};
