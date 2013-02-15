@@ -11,6 +11,8 @@
 
 namespace node {
 
+class SlabAllocator;
+
 #define NODE_VAR(x) (globals_get()->x)
 
 struct globals {
@@ -110,6 +112,43 @@ struct globals {
   // node_io_watcher.cc
   v8::Persistent<v8::FunctionTemplate> io_watcher_constructor_template;
   v8::Persistent<v8::String> callback_symbol;
+
+  // node_script.cc
+  v8::Persistent<v8::FunctionTemplate> wrapped_context_constructor_template;
+  v8::Persistent<v8::FunctionTemplate> wrapped_script_constructor_template;
+  v8::Persistent<v8::Function> cloneObjectMethod;
+
+  // node_signal_watcher.cc
+  v8::Persistent<v8::FunctionTemplate> signal_watcher_constructor_template;
+
+  // node_stat_watcher.cc
+  v8::Persistent<v8::FunctionTemplate> stat_watcher_constructor_template;
+  v8::Persistent<v8::String> onstop_sym;
+
+  // node_zlib.cc
+  v8::Persistent<v8::String> onerror_sym;
+
+  // pipe_wrap.cc
+  v8::Persistent<v8::Function> pipeConstructor;
+  v8::Persistent<v8::String> onconnection_sym;
+
+  // stream_wrap.cc
+  v8::Persistent<v8::String> buffer_sym;
+  v8::Persistent<v8::String> bytes_sym;
+  v8::Persistent<v8::String> write_queue_size_sym;
+  v8::Persistent<v8::String> onread_sym;
+  SlabAllocator* stream_wrap_slab_allocator;
+  bool initialized;
+
+  // tcp_wrap.cc
+  v8::Persistent<v8::Function> tcpConstructor;
+
+  // timer_wrap.cc
+  v8::Persistent<v8::String> ontimeout_sym;
+
+  // udp_wrap.cc
+  v8::Persistent<v8::String> onmessage_sym;
+  SlabAllocator* udp_wrap_slab_allocator;
 };
 
 // Get globals for current thread.

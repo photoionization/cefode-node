@@ -23,6 +23,11 @@
 #include "node_script.h"
 #include <assert.h>
 
+#include "node_vars.h"
+#define wrapped_context_constructor_template NODE_VAR(wrapped_context_constructor_template)
+#define wrapped_script_constructor_template NODE_VAR(wrapped_script_constructor_template)
+#define cloneObjectMethod NODE_VAR(cloneObjectMethod)
+
 namespace node {
 
 using v8::Context;
@@ -55,7 +60,9 @@ class WrappedContext : ObjectWrap {
 
  protected:
 
+#if 0
   static Persistent<FunctionTemplate> constructor_template;
+#endif
 
   WrappedContext();
   ~WrappedContext();
@@ -64,7 +71,9 @@ class WrappedContext : ObjectWrap {
 };
 
 
+#if 0
 Persistent<FunctionTemplate> WrappedContext::constructor_template;
+#endif
 
 
 class WrappedScript : ObjectWrap {
@@ -81,7 +90,9 @@ class WrappedScript : ObjectWrap {
   static Handle<Value> EvalMachine(const Arguments& args);
 
  protected:
+#if 0
   static Persistent<FunctionTemplate> constructor_template;
+#endif
 
   WrappedScript() : ObjectWrap() {}
   ~WrappedScript();
@@ -99,7 +110,9 @@ class WrappedScript : ObjectWrap {
 };
 
 
+#if 0
 Persistent<Function> cloneObjectMethod;
+#endif
 
 void CloneObject(Handle<Object> recv,
                  Handle<Value> source, Handle<Value> target) {
@@ -134,8 +147,8 @@ void CloneObject(Handle<Object> recv,
 void WrappedContext::Initialize(Handle<Object> target) {
   HandleScope scope;
 
-  Local<FunctionTemplate> t = FunctionTemplate::New(WrappedContext::New);
-  constructor_template = Persistent<FunctionTemplate>::New(t);
+  Local<FunctionTemplate> constructor_template = FunctionTemplate::New(WrappedContext::New);
+  wrapped_context_constructor_template = Persistent<FunctionTemplate>::New(constructor_template);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
   constructor_template->SetClassName(String::NewSymbol("Context"));
 
@@ -145,7 +158,7 @@ void WrappedContext::Initialize(Handle<Object> target) {
 
 
 bool WrappedContext::InstanceOf(Handle<Value> value) {
-  return !value.IsEmpty() && constructor_template->HasInstance(value);
+  return !value.IsEmpty() && wrapped_context_constructor_template->HasInstance(value);
 }
 
 
@@ -170,7 +183,7 @@ WrappedContext::~WrappedContext() {
 
 
 Local<Object> WrappedContext::NewInstance() {
-  Local<Object> context = constructor_template->GetFunction()->NewInstance();
+  Local<Object> context = wrapped_context_constructor_template->GetFunction()->NewInstance();
   return context;
 }
 
@@ -180,14 +193,16 @@ Persistent<Context> WrappedContext::GetV8Context() {
 }
 
 
+#if 0
 Persistent<FunctionTemplate> WrappedScript::constructor_template;
+#endif
 
 
 void WrappedScript::Initialize(Handle<Object> target) {
   HandleScope scope;
 
-  Local<FunctionTemplate> t = FunctionTemplate::New(WrappedScript::New);
-  constructor_template = Persistent<FunctionTemplate>::New(t);
+  Local<FunctionTemplate> constructor_template = FunctionTemplate::New(WrappedScript::New);
+  wrapped_script_constructor_template = Persistent<FunctionTemplate>::New(constructor_template);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
   // Note: We use 'NodeScript' instead of 'Script' so that we do not
   // conflict with V8's Script class defined in v8/src/messages.js
@@ -233,7 +248,7 @@ void WrappedScript::Initialize(Handle<Object> target) {
 
 Handle<Value> WrappedScript::New(const Arguments& args) {
   if (!args.IsConstructCall()) {
-    return FromConstructorTemplate(constructor_template, args);
+    return FromConstructorTemplate(wrapped_script_constructor_template, args);
   }
 
   HandleScope scope;

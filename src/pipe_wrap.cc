@@ -26,6 +26,11 @@
 #include "stream_wrap.h"
 #include "pipe_wrap.h"
 
+#include "node_vars.h"
+#define pipeConstructor NODE_VAR(pipeConstructor)
+#define onconnection_sym NODE_VAR(onconnection_sym)
+#define oncomplete_sym NODE_VAR(oncomplete_sym)
+
 namespace node {
 
 using v8::Object;
@@ -43,10 +48,12 @@ using v8::Arguments;
 using v8::Integer;
 using v8::Boolean;
 
+#if 0
 Persistent<Function> pipeConstructor;
 
 static Persistent<String> onconnection_sym;
 static Persistent<String> oncomplete_sym;
+#endif
 
 
 // TODO share with TCPWrap?

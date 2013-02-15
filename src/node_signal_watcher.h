@@ -33,7 +33,9 @@ class SignalWatcher : ObjectWrap {
   static void Initialize(v8::Handle<v8::Object> target);
 
  protected:
+#if 0
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
+#endif
 
   SignalWatcher(int sig) : ObjectWrap() {
     ev_signal_init(&watcher_, SignalWatcher::Callback, sig);

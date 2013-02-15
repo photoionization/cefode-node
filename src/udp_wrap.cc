@@ -46,6 +46,12 @@
 # define uv_inet_ntop inet_ntop
 #endif
 
+#include "node_vars.h"
+#define buffer_sym NODE_VAR(buffer_sym)
+#define oncomplete_sym NODE_VAR(oncomplete_sym)
+#define onmessage_sym NODE_VAR(onmessage_sym)
+#define slab_allocator NODE_VAR(udp_wrap_slab_allocator)
+
 using namespace v8;
 
 namespace node {
@@ -55,10 +61,12 @@ typedef ReqWrap<uv_udp_send_t> SendWrap;
 // see tcp_wrap.cc
 Local<Object> AddressToJS(const sockaddr* addr);
 
+#if 0
 static Persistent<String> buffer_sym;
 static Persistent<String> oncomplete_sym;
 static Persistent<String> onmessage_sym;
 static SlabAllocator* slab_allocator;
+#endif
 
 
 static void DeleteSlabAllocator(void*) {

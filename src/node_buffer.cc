@@ -826,34 +826,34 @@ void Buffer::Initialize(Handle<Object> target) {
 
   Local<FunctionTemplate> t = FunctionTemplate::New(Buffer::New);
   constructor_template = Persistent<FunctionTemplate>::New(t);
-  constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
-  constructor_template->SetClassName(String::NewSymbol("SlowBuffer"));
+  t->InstanceTemplate()->SetInternalFieldCount(1);
+  t->SetClassName(String::NewSymbol("SlowBuffer"));
 
   // copy free
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "binarySlice", Buffer::BinarySlice);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "asciiSlice", Buffer::AsciiSlice);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "base64Slice", Buffer::Base64Slice);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "ucs2Slice", Buffer::Ucs2Slice);
+  NODE_SET_PROTOTYPE_METHOD(t, "binarySlice", Buffer::BinarySlice);
+  NODE_SET_PROTOTYPE_METHOD(t, "asciiSlice", Buffer::AsciiSlice);
+  NODE_SET_PROTOTYPE_METHOD(t, "base64Slice", Buffer::Base64Slice);
+  NODE_SET_PROTOTYPE_METHOD(t, "ucs2Slice", Buffer::Ucs2Slice);
   // TODO NODE_SET_PROTOTYPE_METHOD(t, "utf16Slice", Utf16Slice);
   // copy
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "utf8Slice", Buffer::Utf8Slice);
+  NODE_SET_PROTOTYPE_METHOD(t, "utf8Slice", Buffer::Utf8Slice);
 
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "utf8Write", Buffer::Utf8Write);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "asciiWrite", Buffer::AsciiWrite);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "binaryWrite", Buffer::BinaryWrite);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "base64Write", Buffer::Base64Write);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "ucs2Write", Buffer::Ucs2Write);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "fill", Buffer::Fill);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "copy", Buffer::Copy);
+  NODE_SET_PROTOTYPE_METHOD(t, "utf8Write", Buffer::Utf8Write);
+  NODE_SET_PROTOTYPE_METHOD(t, "asciiWrite", Buffer::AsciiWrite);
+  NODE_SET_PROTOTYPE_METHOD(t, "binaryWrite", Buffer::BinaryWrite);
+  NODE_SET_PROTOTYPE_METHOD(t, "base64Write", Buffer::Base64Write);
+  NODE_SET_PROTOTYPE_METHOD(t, "ucs2Write", Buffer::Ucs2Write);
+  NODE_SET_PROTOTYPE_METHOD(t, "fill", Buffer::Fill);
+  NODE_SET_PROTOTYPE_METHOD(t, "copy", Buffer::Copy);
 
-  NODE_SET_METHOD(constructor_template->GetFunction(),
+  NODE_SET_METHOD(t->GetFunction(),
                   "byteLength",
                   Buffer::ByteLength);
-  NODE_SET_METHOD(constructor_template->GetFunction(),
+  NODE_SET_METHOD(t->GetFunction(),
                   "makeFastBuffer",
                   Buffer::MakeFastBuffer);
 
-  target->Set(String::NewSymbol("SlowBuffer"), constructor_template->GetFunction());
+  target->Set(String::NewSymbol("SlowBuffer"), t->GetFunction());
 
   HeapProfiler::DefineWrapperClass(BUFFER_CLASS_ID, WrapperInfo);
 }

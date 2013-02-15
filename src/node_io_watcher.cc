@@ -27,7 +27,7 @@
 #include <assert.h>
 
 #include "node_vars.h"
-#define constructor_template NODE_VAR(io_watcher_constructor_template)
+#define io_watcher_constructor_template NODE_VAR(io_watcher_constructor_template)
 #define callback_symbol NODE_VAR(callback_symbol)
 
 namespace node {
@@ -43,8 +43,8 @@ Persistent<String> callback_symbol;
 void IOWatcher::Initialize(Handle<Object> target) {
   HandleScope scope;
 
-  Local<FunctionTemplate> t = FunctionTemplate::New(IOWatcher::New);
-  constructor_template = Persistent<FunctionTemplate>::New(t);
+  Local<FunctionTemplate> constructor_template = FunctionTemplate::New(IOWatcher::New);
+  io_watcher_constructor_template = Persistent<FunctionTemplate>::New(constructor_template);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
   constructor_template->SetClassName(String::NewSymbol("IOWatcher"));
 
@@ -87,7 +87,7 @@ void IOWatcher::Callback(EV_P_ ev_io *w, int revents) {
 //
 Handle<Value> IOWatcher::New(const Arguments& args) {
   if (!args.IsConstructCall()) {
-    return FromConstructorTemplate(constructor_template, args);
+    return FromConstructorTemplate(io_watcher_constructor_template, args);
   }
 
   if (!no_deprecation) {

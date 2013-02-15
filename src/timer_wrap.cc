@@ -22,6 +22,9 @@
 #include "node.h"
 #include "handle_wrap.h"
 
+#include "node_vars.h"
+#define ontimeout_sym NODE_VAR(ontimeout_sym)
+
 namespace node {
 
 using v8::Object;
@@ -38,7 +41,9 @@ using v8::Context;
 using v8::Arguments;
 using v8::Integer;
 
+#if 0
 static Persistent<String> ontimeout_sym;
+#endif
 
 class TimerWrap : public HandleWrap {
  public:

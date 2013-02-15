@@ -25,20 +25,27 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "node_vars.h"
+#define stat_watcher_constructor_template NODE_VAR(stat_watcher_constructor_template)
+#define onchange_sym NODE_VAR(onchange_sym)
+#define onstop_sym NODE_VAR(onstop_sym)
+
 namespace node {
 
 using namespace v8;
 
+#if 0
 Persistent<FunctionTemplate> StatWatcher::constructor_template;
 static Persistent<String> onchange_sym;
 static Persistent<String> onstop_sym;
+#endif
 
 
 void StatWatcher::Initialize(Handle<Object> target) {
   HandleScope scope;
 
-  Local<FunctionTemplate> t = FunctionTemplate::New(StatWatcher::New);
-  constructor_template = Persistent<FunctionTemplate>::New(t);
+  Local<FunctionTemplate> constructor_template = FunctionTemplate::New(StatWatcher::New);
+  stat_watcher_constructor_template = Persistent<FunctionTemplate>::New(constructor_template);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
   constructor_template->SetClassName(String::NewSymbol("StatWatcher"));
 

@@ -30,13 +30,19 @@
 #include "node.h"
 #include "node_buffer.h"
 
+#include "node_vars.h"
+#define callback_sym NODE_VAR(callback_sym)
+#define onerror_sym NODE_VAR(onerror_sym)
+
 
 namespace node {
 using namespace v8;
 
 
+#if 0
 static Persistent<String> callback_sym;
 static Persistent<String> onerror_sym;
+#endif
 
 enum node_zlib_mode {
   NONE,

@@ -43,6 +43,11 @@
 # define uv_inet_ntop inet_ntop
 #endif
 
+#include "node_vars.h"
+#define tcpConstructor NODE_VAR(tcpConstructor)
+#define onconnection_sym NODE_VAR(onconnection_sym)
+#define oncomplete_sym NODE_VAR(oncomplete_sym)
+
 namespace node {
 
 using v8::Arguments;
@@ -61,9 +66,11 @@ using v8::TryCatch;
 using v8::Undefined;
 using v8::Value;
 
+#if 0
 static Persistent<Function> tcpConstructor;
 static Persistent<String> oncomplete_sym;
 static Persistent<String> onconnection_sym;
+#endif
 
 
 typedef class ReqWrap<uv_connect_t> ConnectWrap;

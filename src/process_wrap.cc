@@ -49,7 +49,9 @@ using v8::Integer;
 using v8::Exception;
 using v8::ThrowException;
 
+#if 0
 static Persistent<String> onexit_sym;
+#endif
 
 class ProcessWrap : public HandleWrap {
  public:
@@ -294,10 +296,7 @@ class ProcessWrap : public HandleWrap {
       String::New(signo_string(term_signal))
     };
 
-    if (onexit_sym.IsEmpty()) {
-      onexit_sym = NODE_PSYMBOL("onexit");
-    }
-    MakeCallback(wrap->object_, onexit_sym, ARRAY_SIZE(argv), argv);
+    MakeCallback(wrap->object_, String::NewSymbol("onexit"), ARRAY_SIZE(argv), argv);
   }
 
   uv_process_t process_;

@@ -33,6 +33,15 @@
 
 #define SLAB_SIZE (1024 * 1024)
 
+#include "node_vars.h"
+#define buffer_sym NODE_VAR(buffer_sym)
+#define bytes_sym NODE_VAR(bytes_sym)
+#define write_queue_size_sym NODE_VAR(write_queue_size_sym)
+#define onread_sym NODE_VAR(onread_sym)
+#define oncomplete_sym NODE_VAR(oncomplete_sym)
+#define slab_allocator NODE_VAR(stream_wrap_slab_allocator)
+#define initialized NODE_VAR(initialized)
+
 
 namespace node {
 
@@ -71,6 +80,7 @@ class WriteWrap: public ReqWrap<uv_write_t> {
 };
 
 
+#if 0
 static Persistent<String> buffer_sym;
 static Persistent<String> bytes_sym;
 static Persistent<String> write_queue_size_sym;
@@ -78,6 +88,7 @@ static Persistent<String> onread_sym;
 static Persistent<String> oncomplete_sym;
 static SlabAllocator* slab_allocator;
 static bool initialized;
+#endif
 
 
 static void DeleteSlabAllocator(void*) {

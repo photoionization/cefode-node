@@ -22,18 +22,24 @@
 #include "node_signal_watcher.h"
 #include <assert.h>
 
+#include "node_vars.h"
+#define signal_watcher_constructor_template NODE_VAR(signal_watcher_constructor_template)
+#define callback_symbol NODE_VAR(callback_symbol)
+
 namespace node {
 
 using namespace v8;
 
+#if 0
 Persistent<FunctionTemplate> SignalWatcher::constructor_template;
 static Persistent<String> callback_symbol;
+#endif
 
 void SignalWatcher::Initialize(Handle<Object> target) {
   HandleScope scope;
 
-  Local<FunctionTemplate> t = FunctionTemplate::New(SignalWatcher::New);
-  constructor_template = Persistent<FunctionTemplate>::New(t);
+  Local<FunctionTemplate> constructor_template = FunctionTemplate::New(SignalWatcher::New);
+  signal_watcher_constructor_template = Persistent<FunctionTemplate>::New(constructor_template);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
   constructor_template->SetClassName(String::NewSymbol("SignalWatcher"));
 
@@ -67,7 +73,7 @@ void SignalWatcher::Callback(EV_P_ ev_signal *watcher, int revents) {
 
 Handle<Value> SignalWatcher::New(const Arguments& args) {
   if (!args.IsConstructCall()) {
-    return FromConstructorTemplate(constructor_template, args);
+    return FromConstructorTemplate(signal_watcher_constructor_template, args);
   }
 
   HandleScope scope;
