@@ -47,6 +47,9 @@
 # define uv_inet_ntop inet_ntop
 #endif
 
+#include "node_vars.h"
+#define oncomplete_sym NODE_VAR(oncomplete_sym)
+#define ares_channel NODE_VAR(ares_channel)
 
 namespace node {
 
@@ -69,9 +72,11 @@ using v8::Value;
 
 typedef class ReqWrap<uv_getaddrinfo_t> GetAddrInfoReqWrap;
 
+#if 0
 static Persistent<String> oncomplete_sym;
 
 static ares_channel ares_channel;
+#endif
 
 
 static Local<Array> HostentToAddresses(struct hostent* host) {

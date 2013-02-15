@@ -43,6 +43,21 @@
 # include <pthread.h>
 #endif
 
+#include "node_vars.h"
+#define subject_symbol NODE_VAR(subject_symbol)
+#define subjectaltname_symbol NODE_VAR(subjectaltname_symbol)
+#define modulus_symbol NODE_VAR(modulus_symbol)
+#define exponent_symbol NODE_VAR(exponent_symbol)
+#define issuer_symbol NODE_VAR(issuer_symbol)
+#define valid_from_symbol NODE_VAR(valid_from_symbol)
+#define valid_to_symbol NODE_VAR(valid_to_symbol)
+#define fingerprint_symbol NODE_VAR(fingerprint_symbol)
+#define name_symbol NODE_VAR(name_symbol)
+#define version_symbol NODE_VAR(version_symbol)
+#define ext_key_usage_symbol NODE_VAR(ext_key_usage_symbol)
+#define onhandshakestart_sym NODE_VAR(onhandshakestart_sym)
+#define onhandshakedone_sym NODE_VAR(onhandshakedone_sym)
+#define secure_context_constructor NODE_VAR(secure_context_constructor)
 
 #if OPENSSL_VERSION_NUMBER >= 0x10000000L
 # define OPENSSL_CONST const
@@ -69,6 +84,7 @@ namespace crypto {
 
 using namespace v8;
 
+#if 0
 static Persistent<String> errno_symbol;
 static Persistent<String> syscall_symbol;
 static Persistent<String> subject_symbol;
@@ -86,6 +102,7 @@ static Persistent<String> onhandshakestart_sym;
 static Persistent<String> onhandshakedone_sym;
 
 static Persistent<FunctionTemplate> secure_context_constructor;
+#endif
 
 static uv_rwlock_t* locks;
 

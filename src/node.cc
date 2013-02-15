@@ -85,7 +85,24 @@ typedef int mode_t;
 #else
 #include <pthread.h>
 #endif
+
 #include "node_vars.h"
+#define errno_symbol NODE_VAR(errno_symbol)
+#define syscall_symbol NODE_VAR(syscall_symbol)
+#define errpath_symbol NODE_VAR(errpath_symbol)
+#define code_symbol NODE_VAR(code_symbol)
+
+#define rss_symbol NODE_VAR(rss_symbol)
+#define heap_total_symbol NODE_VAR(heap_total_symbol)
+#define heap_used_symbol NODE_VAR(heap_used_symbol)
+
+#define listeners_symbol NODE_VAR(listeners_symbol)
+#define uncaught_exception_symbol NODE_VAR(uncaught_exception_symbol)
+#define emit_symbol NODE_VAR(emit_symbol)
+
+#define enter_symbol NODE_VAR(enter_symbol)
+#define exit_symbol NODE_VAR(exit_symbol)
+#define disposed_symbol NODE_VAR(disposed_symbol)
 
 using namespace v8;
 
@@ -127,22 +144,6 @@ static Persistent<String> enter_symbol;
 static Persistent<String> exit_symbol;
 static Persistent<String> disposed_symbol;
 #endif
-#define errno_symbol NODE_VAR(errno_symbol)
-#define syscall_symbol NODE_VAR(syscall_symbol)
-#define errpath_symbol NODE_VAR(errpath_symbol)
-#define code_symbol NODE_VAR(code_symbol)
-
-#define rss_symbol NODE_VAR(rss_symbol)
-#define heap_total_symbol NODE_VAR(heap_total_symbol)
-#define heap_used_symbol NODE_VAR(heap_used_symbol)
-
-#define listeners_symbol NODE_VAR(listeners_symbol)
-#define uncaught_exception_symbol NODE_VAR(uncaught_exception_symbol)
-#define emit_symbol NODE_VAR(emit_symbol)
-
-#define enter_symbol NODE_VAR(enter_symbol)
-#define exit_symbol NODE_VAR(exit_symbol)
-#define disposed_symbol NODE_VAR(disposed_symbol)
 
 
 static bool print_eval = false;

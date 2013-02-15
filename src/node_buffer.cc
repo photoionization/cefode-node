@@ -38,6 +38,12 @@
 
 #define BUFFER_CLASS_ID (0xBABE)
 
+#include "node_vars.h"
+#define length_symbol NODE_VAR(length_symbol)
+#define chars_written_sym NODE_VAR(chars_written_sym)
+#define write_sym NODE_VAR(write_sym)
+#define constructor_template NODE_VAR(buffer_constructor_template)
+
 namespace node {
 
 using namespace v8;
@@ -63,10 +69,12 @@ using namespace v8;
   }
 
 
+#if 0
 static Persistent<String> length_symbol;
 static Persistent<String> chars_written_sym;
 static Persistent<String> write_sym;
 Persistent<FunctionTemplate> Buffer::constructor_template;
+#endif
 
 
 static inline size_t base64_decoded_size(const char *src, size_t size) {

@@ -33,6 +33,31 @@
 #endif
 #include <stdlib.h>  /* free() */
 
+#include "node_vars.h"
+#define on_headers_sym NODE_VAR(on_headers_sym)
+#define on_headers_complete_sym NODE_VAR(on_headers_complete_sym)
+#define on_body_sym NODE_VAR(on_body_sym)
+#define on_message_complete_sym NODE_VAR(on_message_complete_sym)
+
+#define method_sym NODE_VAR(method_sym)
+#define status_code_sym NODE_VAR(status_code_sym)
+#define http_version_sym NODE_VAR(http_version_sym)
+#define version_major_sym NODE_VAR(version_major_sym)
+#define version_minor_sym NODE_VAR(version_minor_sym)
+#define should_keep_alive_sym NODE_VAR(should_keep_alive_sym)
+#define upgrade_sym NODE_VAR(upgrade_sym)
+#define headers_sym NODE_VAR(headers_sym)
+#define url_sym NODE_VAR(url_sym)
+
+#define unknown_method_sym NODE_VAR(unknown_method_sym)
+
+#define settings NODE_VAR(settings)
+
+#define current_buffer NODE_VAR(current_buffer)
+#define current_buffer_data NODE_VAR(current_buffer_data)
+#define current_buffer_len NODE_VAR(current_buffer_len)
+
+
 // This is a binding to http_parser (https://github.com/joyent/http-parser)
 // The goal is to decouple sockets from parsing for more javascript-level
 // agility. A Buffer is read from a socket and passed to parser.execute().
@@ -49,6 +74,7 @@ namespace node {
 
 using namespace v8;
 
+#if 0
 static Persistent<String> on_headers_sym;
 static Persistent<String> on_headers_complete_sym;
 static Persistent<String> on_body_sym;
@@ -65,11 +91,13 @@ static Persistent<String> headers_sym;
 static Persistent<String> url_sym;
 
 static Persistent<String> unknown_method_sym;
+#endif
 
 #define X(num, name, string) static Persistent<String> name##_sym;
 HTTP_METHOD_MAP(X)
 #undef X
 
+#if 0
 static struct http_parser_settings settings;
 
 
@@ -79,6 +107,7 @@ static struct http_parser_settings settings;
 static Local<Value>* current_buffer;
 static char* current_buffer_data;
 static size_t current_buffer_len;
+#endif
 
 
 #define HTTP_CB(name)                                               \
