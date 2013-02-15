@@ -42,7 +42,7 @@ using v8::Integer;
 
 
 // defined in node.cc
-extern ngx_queue_t handle_wrap_queue;
+// extern ngx_queue_t handle_wrap_queue;
 
 
 void HandleWrap::Initialize(Handle<Object> target) {
@@ -103,7 +103,7 @@ HandleWrap::HandleWrap(Handle<Object> object, uv_handle_t* h) {
   assert(object->InternalFieldCount() > 0);
   object_ = v8::Persistent<v8::Object>::New(object);
   object_->SetPointerInInternalField(0, this);
-  ngx_queue_insert_tail(&handle_wrap_queue, &handle_wrap_queue_);
+  // ngx_queue_insert_tail(&handle_wrap_queue, &handle_wrap_queue_);
 }
 
 
