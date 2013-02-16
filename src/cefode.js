@@ -96,15 +96,14 @@
   } else {
     // Every window should has its own process object.
     var processProxy = {};
-    var bindingCache = {};
-    processProxy.__proto__ = Object.create(process);
-    processProxy.parent = process;
+    processProxy._bindingCache = {};
+    processProxy.__proto__ = process;
     processProxy.nextTick = function(callback) { setTimeout(callback, 0); };
     processProxy.binding = function(id) {
-      var cached = bindingCache[id];
+      var cached = processProxy._bindingCache[id];
       if (cached) return cached;
 
-      return bindingCache[id] = process.binding(id);
+      return processProxy._bindingCache[id] = process.binding(id);
     }
 
     global.process = processProxy;
