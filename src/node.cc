@@ -206,6 +206,8 @@ static double prog_start_time;
 static int64_t tick_times[RPM_SAMPLES];
 static int tick_time_head;
 
+static void ReportException(TryCatch &try_catch, bool show_line);
+
 static void CheckStatus(uv_timer_t* watcher, int status);
 
 static void StartGCTimer () {
@@ -1077,7 +1079,7 @@ MakeCallback(const Handle<Object> object,
   }
 
   if (try_catch.HasCaught()) {
-    FatalException(try_catch);
+    ReportException(try_catch, true);
     return Undefined();
   }
 
@@ -2859,7 +2861,6 @@ char** Init(int argc, char *argv[]) {
     SetResourceConstraints(&constraints); // Must be done before V8::Initialize
   }
   V8::SetFlagsFromCommandLine(&v8argc, v8argv, false);
-#endif
 
 #ifdef __POSIX__
   // Ignore SIGPIPE
@@ -2867,6 +2868,7 @@ char** Init(int argc, char *argv[]) {
   RegisterSignalHandler(SIGINT, SignalExit);
   RegisterSignalHandler(SIGTERM, SignalExit);
 #endif // __POSIX__
+#endif
 
   uv_prepare_init(uv_default_loop(), &prepare_tick_watcher);
   uv_prepare_start(&prepare_tick_watcher, PrepareTick);
@@ -2878,6 +2880,7 @@ char** Init(int argc, char *argv[]) {
 
   uv_idle_init(uv_default_loop(), &tick_spinner);
 
+#if 0
   uv_check_init(uv_default_loop(), &gc_check);
   uv_check_start(&gc_check, node::Check);
   uv_unref(reinterpret_cast<uv_handle_t*>(&gc_check));
@@ -2887,6 +2890,7 @@ char** Init(int argc, char *argv[]) {
 
   uv_timer_init(uv_default_loop(), &gc_timer);
   uv_unref(reinterpret_cast<uv_handle_t*>(&gc_timer));
+#endif
 
   V8::SetFatalErrorHandler(node::OnFatalError);
 
@@ -2991,16 +2995,9 @@ void SetupUv(int argc, char *argv[]) {
   // Hack aroung with the argv pointer. Used for process.title = "blah".
   argv = uv_setup_args(argc, argv);
 
-  // Logic to duplicate argv as Init() modifies arguments
-  // that are passed into it.
-  char **argv_copy = copy_argv(argc, argv);
-
   // This needs to run *before* V8::Initialize()
   // Use copy here as to not modify the original argv:
-  Init(argc, argv_copy);
-
-  // Clean up the copy:
-  free(argv_copy);
+  Init(argc, argv);
 }
 
 void SetupContext(int argc, char *argv[], v8::Handle<v8::Object> global) {

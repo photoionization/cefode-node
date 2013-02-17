@@ -855,7 +855,7 @@ void Buffer::Initialize(Handle<Object> target) {
 
   target->Set(String::NewSymbol("SlowBuffer"), t->GetFunction());
 
-  HeapProfiler::DefineWrapperClass(BUFFER_CLASS_ID, WrapperInfo);
+  // HeapProfiler::DefineWrapperClass(BUFFER_CLASS_ID, WrapperInfo);
 }
 
 

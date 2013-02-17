@@ -60,16 +60,19 @@
 
     startup.resolveArgv0();
 
-    var Module = NativeModule.require('module');
-
-    // Emulate node.js script's execution everionment
-    var module = new Module('.', null);
-    global.process.mainModule = module;
-    module._compile('global.module = module;\n' +
-                    'global.require = require;\n', 'nw-emulate-node');
-
     // Make it possible to access the global of node.
     process.global = global;
+    process.NativeModule = NativeModule;
+
+    // Do cache here instead of in node.cc.
+    var binding = process.binding;
+    var bindingCache = {};
+    process.binding = function(id) {
+      var cached = bindingCache[id];
+      if (cached) return cached;
+
+      return bindingCache[id] = binding(id);
+    }
   }
 
   startup.globalVariables = function() {
