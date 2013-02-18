@@ -1,6 +1,142 @@
 (function(process, scriptPath) {
   this.global = this;
 
+  function createWritableStdioStream(fd) {
+    var stream;
+    var tty_wrap = process.binding('tty_wrap');
+
+    // Note stream._type is used for test-module-load-list.js
+
+    switch (tty_wrap.guessHandleType(fd)) {
+      case 'TTY':
+        var tty = NativeModule.require('tty');
+        stream = new tty.WriteStream(fd);
+        stream._type = 'tty';
+
+        // Hack to have stream not keep the event loop alive.
+        // See https://github.com/joyent/node/issues/1726
+        if (stream._handle && stream._handle.unref) {
+          stream._handle.unref();
+        }
+        break;
+
+      case 'FILE':
+        var fs = NativeModule.require('fs');
+        stream = new fs.SyncWriteStream(fd);
+        stream._type = 'fs';
+        break;
+
+      case 'PIPE':
+        var net = NativeModule.require('net');
+        stream = new net.Stream(fd);
+
+        // FIXME Should probably have an option in net.Stream to create a
+        // stream from an existing fd which is writable only. But for now
+        // we'll just add this hack and set the `readable` member to false.
+        // Test: ./node test/fixtures/echo.js < /etc/passwd
+        stream.readable = false;
+        stream._type = 'pipe';
+
+        // FIXME Hack to have stream not keep the event loop alive.
+        // See https://github.com/joyent/node/issues/1726
+        if (stream._handle && stream._handle.unref) {
+          stream._handle.unref();
+        }
+        break;
+
+      default:
+        // Probably an error on in uv_guess_handle()
+        throw new Error('Implement me. Unknown stream file type!');
+    }
+
+    // For supporting legacy API we put the FD here.
+    stream.fd = fd;
+
+    stream._isStdio = true;
+
+    return stream;
+  }
+
+  function processStdio() {
+    var stdin, stdout, stderr;
+
+    process.__defineGetter__('stdout', function() {
+      if (stdout) return stdout;
+      stdout = createWritableStdioStream(1);
+      stdout.destroy = stdout.destroySoon = function(er) {
+        er = er || new Error('process.stdout cannot be closed.');
+        stdout.emit('error', er);
+      };
+      if (stdout.isTTY) {
+        process.on('SIGWINCH', function() {
+          stdout._refreshSize();
+        });
+      }
+      return stdout;
+    });
+
+    process.__defineGetter__('stderr', function() {
+      if (stderr) return stderr;
+      stderr = createWritableStdioStream(2);
+      stderr.destroy = stderr.destroySoon = function(er) {
+        er = er || new Error('process.stderr cannot be closed.');
+        stderr.emit('error', er);
+      };
+      return stderr;
+    });
+
+    process.__defineGetter__('stdin', function() {
+      if (stdin) return stdin;
+
+      var tty_wrap = process.binding('tty_wrap');
+      var fd = 0;
+
+      switch (tty_wrap.guessHandleType(fd)) {
+        case 'TTY':
+          var tty = NativeModule.require('tty');
+          stdin = new tty.ReadStream(fd);
+          break;
+
+        case 'FILE':
+          var fs = NativeModule.require('fs');
+          stdin = new fs.ReadStream(null, {fd: fd});
+          break;
+
+        case 'PIPE':
+          var net = NativeModule.require('net');
+          stdin = new net.Stream(fd);
+          stdin.readable = true;
+          break;
+
+        default:
+          // Probably an error on in uv_guess_handle()
+          throw new Error('Implement me. Unknown stdin file type!');
+      }
+
+      // For supporting legacy API we put the FD here.
+      stdin.fd = fd;
+
+      // stdin starts out life in a paused state, but node doesn't
+      // know yet.  Call pause() explicitly to unref() it.
+      stdin.pause();
+
+      // when piping stdin to a destination stream,
+      // let the data begin to flow.
+      var pipe = stdin.pipe;
+      stdin.pipe = function(dest, opts) {
+        stdin.resume();
+        return pipe.call(stdin, dest, opts);
+      };
+
+      return stdin;
+    });
+
+    process.openStdin = function() {
+      process.stdin.resume();
+      return process.stdin;
+    };
+  };
+
   var Script = process.binding('evals').NodeScript;
   var runInThisContext = Script.runInThisContext;
 
@@ -72,6 +208,15 @@
     NativeModule._cache[this.id] = this;
   };
 
+  // Make process inherit EventEmitter.
+  var EventEmitter = NativeModule.require('events').EventEmitter;
+  process.__proto__ = Object.create(EventEmitter.prototype, {
+    constructor: {
+      value: process.constructor
+    }
+  });
+
+  // Cache process.binding.
   var binding = process.binding;
   var bindingCache = {};
   process.binding = function(id) {
@@ -81,6 +226,12 @@
     return bindingCache[id] = binding(id);
   }
   process.nextTick = function(callback) { setTimeout(callback, 0); };
+
+  // Include console.
+  processStdio();
+  global.__defineGetter__('console', function() {
+    return NativeModule.require('console');
+  });
 
   // Inject globals.
   global.global = global;
