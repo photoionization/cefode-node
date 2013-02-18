@@ -40,6 +40,10 @@ Handle<String> CefodeMainSource() {
   return String::New(cefode_native, sizeof(cefode_native)-1);
 }
 
+Handle<String> CefodeWorkerMainSource() {
+  return String::New(cefode_worker_native, sizeof(cefode_worker_native)-1);
+}
+
 void DefineJavaScript(v8::Handle<v8::Object> target) {
   HandleScope scope;
 

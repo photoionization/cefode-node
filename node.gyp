@@ -14,6 +14,7 @@
     'library_files': [
       'src/node.js',
       'src/cefode.js',
+      'src/cefode_worker.js',
       'lib/_debugger.js',
       'lib/_linklist.js',
       'lib/assert.js',
