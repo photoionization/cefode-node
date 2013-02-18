@@ -32,12 +32,24 @@ using namespace v8;
 
 namespace node {
 
+static Persistent<Script> cefode_script;
+
 Handle<String> MainSource() {
   return String::New(node_native, sizeof(node_native)-1);
 }
 
 Handle<String> CefodeMainSource() {
   return String::New(cefode_native, sizeof(cefode_native)-1);
+}
+
+Handle<Script> CompileCefodeMainSource() {
+  if (cefode_script.IsEmpty()) {
+    Local<Script> script = Script::New(
+        CefodeMainSource(), String::New("cefode.js"));
+    cefode_script = Persistent<Script>::New(script);
+  }
+
+  return cefode_script;
 }
 
 Handle<String> CefodeWorkerMainSource() {
