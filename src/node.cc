@@ -1065,7 +1065,6 @@ MakeCallback(const Handle<Object> object,
     return Undefined();
   }
 
-  Context::Scope context_scope(callback->CreationContext());
   Local<Value> ret = callback->Call(object, argc, argv);
 
   if (try_catch.HasCaught()) {

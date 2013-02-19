@@ -25,7 +25,7 @@
   var source = NativeModule.getSource('module');
   source = NativeModule.wrap(source);
 
-  var modulejs = new NativeModule('modulejs');
+  var modulejs = new NativeModule('module');
   var fn = runInThisContext(source, modulejs.filename, true);
   fn(modulejs.exports, NativeModule.require, modulejs, modulejs.filename);
 
