@@ -281,3 +281,7 @@ MakeCallback(const v8::Handle<v8::Object> object,
 #endif
 
 #endif  // SRC_NODE_H_
+
+// Dirty hack to convert old APIs to new APIs of V8.
+#define SetPointerInInternalField(a,b) SetAlignedPointerInInternalField(a,b)
+#define GetPointerFromInternalField(a) GetAlignedPointerFromInternalField(a)
