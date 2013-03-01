@@ -9,7 +9,7 @@
   'targets': [
     {
       'target_name': 'openssl',
-      'type': '<(library)',
+      'type': 'static_library',
       'toolsets': ['host', 'target'],
       'defines': [
         'L_ENDIAN',

@@ -23,7 +23,7 @@
     {
       'target_name': 'uv',
       'toolsets': ['host', 'target'],
-      'type': '<(library)',
+      'type': 'static_library',
       'include_dirs': [
         'include',
         'include/uv-private',
