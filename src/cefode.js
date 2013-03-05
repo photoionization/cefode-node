@@ -44,4 +44,14 @@
   module.loaded = true;
   module._compile('global.module = module;\n' +
                   'global.require = require;\n', 'nw-emulate-node');
+
+  // Redirect window.onerror to uncaughtException.
+  window.onerror = function(error) {
+    if (global.process.listeners('uncaughtException').length > 0) {
+      global.process.emit('uncaughtException', error);
+      return true;
+    } else {
+      return false;
+    }
+  }
 });
