@@ -1,13 +1,12 @@
 (function(process, scriptPath) {
   this.global = this;
 
-  var NativeModule;
   var Script = process.binding('evals').NodeScript;
   var runInThisContext = Script.runInThisContext;
 
   // In normal page, we evaluate built-in modules in node context, and all
   // pages share the same built-in module code.
-  NativeModule = process.NativeModule;
+  var NativeModule = process.NativeModule;
 
   // Every window should has its own process object.
   global.process = {};
