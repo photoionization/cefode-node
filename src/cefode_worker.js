@@ -216,10 +216,21 @@
     }
   });
 
+  // List of non-thread-safe modules, see
+  // https://github.com/zcbenz/cefode/wiki/List-of-thread-safe-modules
+  var unsafe_modules = [ 'crypto', 'https', 'tls' ];
+
   // Cache process.binding.
   var binding = process.binding;
   var bindingCache = {};
   process.binding = function(id) {
+    if (unsafe_modules.indexOf(id) > 0) {
+      var warning = id + " is not thread safe, don't use it in workers.\n" +
+          "see https://github.com/zcbenz/cefode/wiki/List-of-thread-safe-modules";
+      console.log(warning);
+      throw new Error(warning);
+    }
+
     var cached = bindingCache[id];
     if (cached) return cached;
 
