@@ -1038,7 +1038,9 @@ MakeCallback(const Handle<Object> object,
 
   // TODO Hook for long stack traces to be made here.
 
+#if 0
   TryCatch try_catch;
+#endif
 
   if (enter_symbol.IsEmpty()) {
     enter_symbol = NODE_PSYMBOL("enter");
@@ -1060,13 +1062,16 @@ MakeCallback(const Handle<Object> object,
     enter->Call(domain, 0, NULL);
   }
 
+#if 0
   if (try_catch.HasCaught()) {
     FatalException(try_catch);
     return Undefined();
   }
+#endif
 
   Local<Value> ret = callback->Call(object, argc, argv);
 
+#if 0
   if (try_catch.HasCaught()) {
     FatalException(try_catch);
     return Undefined();
@@ -1081,6 +1086,7 @@ MakeCallback(const Handle<Object> object,
     ReportException(try_catch, true);
     return Undefined();
   }
+#endif
 
   return scope.Close(ret);
 }
@@ -1905,7 +1911,9 @@ void FatalException(TryCatch &try_catch) {
   // Report and exit if process has no "uncaughtException" listener
   if (length == 0) {
     ReportException(try_catch, true);
+#if 0
     exit(1);
+#endif
   }
 
   // Otherwise fire the process "uncaughtException" event
@@ -1926,8 +1934,10 @@ void FatalException(TryCatch &try_catch) {
     exit(1);
   }
 
+#if 0
   // This makes sure uncaught exceptions don't interfere with process.nextTick
   StartTickSpinner();
+#endif
 }
 
 
