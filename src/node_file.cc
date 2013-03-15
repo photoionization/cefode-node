@@ -400,6 +400,26 @@ static Handle<Value> Stat(const Arguments& args) {
   }
 }
 
+static Handle<Value> StatNoException(const Arguments& args) {
+  HandleScope scope;
+
+  if (args.Length() < 1) return TYPE_ERROR("path required");
+  if (!args[0]->IsString()) return TYPE_ERROR("path must be a string");
+
+  String::Utf8Value path(args[0]);
+
+  fs_req_wrap req_wrap;
+  int result = uv_fs_stat(uv_default_loop(), &req_wrap.req, *path, NULL);
+  if (result < 0) {
+    int code = uv_last_error(uv_default_loop()).code;
+    return Integer::New(code);
+  }
+
+  return scope.Close(
+      BuildStatsObject(static_cast<const uv_statbuf_t*>(SYNC_REQ.ptr)));
+}
+
+
 static Handle<Value> LStat(const Arguments& args) {
   HandleScope scope;
 
@@ -985,6 +1005,7 @@ void File::Initialize(Handle<Object> target) {
   NODE_SET_METHOD(target, "sendfile", SendFile);
   NODE_SET_METHOD(target, "readdir", ReadDir);
   NODE_SET_METHOD(target, "stat", Stat);
+  NODE_SET_METHOD(target, "statNoException", StatNoException);
   NODE_SET_METHOD(target, "lstat", LStat);
   NODE_SET_METHOD(target, "fstat", FStat);
   NODE_SET_METHOD(target, "link", Link);
